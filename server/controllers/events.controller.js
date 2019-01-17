@@ -4,7 +4,7 @@ const Event = require('../model/event.model').Event;
 const Attachment = require('../model/event.model').Attachment;
 const Location = require('../model/event.model').Location;
 
-require('../db')('mapstory-backend-test');
+require('../db')('mapstory-backend');
 
 //Adds event to events array within story object
 const addEvent = async (ctx, next) => {
@@ -45,6 +45,8 @@ const addEvent = async (ctx, next) => {
         }));
       }
 
+
+
       const locationData = ctx.request.body.location;
       const location = await Location.create(locationData);
 
@@ -57,8 +59,13 @@ const addEvent = async (ctx, next) => {
         attachments,
       };
       const createdEvent = await Event.create(eventData);
-      story.events.push(createdEvent);
-      story.save();
+      // console.log('I am here', createdEvent)
+      // console.log(story)
+      // story.events.push(createdEvent);
+      // console.log(story)
+      // console.log(await story.save());
+      console.log(await Story.update({ _id: ctx.params.id },
+        { $push: { events: createdEvent} }));
       ctx.status = 201;
       ctx.body = createdEvent;
     } else {
