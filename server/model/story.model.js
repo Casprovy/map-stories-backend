@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const ObjectId = require('mongoose').Types.ObjectId;
 const Schema = mongoose.Schema;
+const {mockStory, mockStories} = require('../tests/mocks');
+
 
 const attachmentsSchema = new Schema({
   text: String,
@@ -39,8 +41,10 @@ Story.findStory = (storyId) => {
               .populate('events');
 };
 
-Story.createStory = (newStory) => {
-  return newStory.save();
+Story.createStory = (storyData) => {
+  const newStory = new Story(storyData);
+  console.log('ran', newStory)
+  newStory.save(err => {console.log(err)});
 };
 
 Story.editStory = (storyId, updatedProps) => {
@@ -52,4 +56,14 @@ Story.deleteStory = (storyId) => {
   return Story.findByIdAndRemove(storyId);
 };
 
+// Story.createStory(mockStory);
+// mockStories.forEach(el => {
+//   try {
+//     Story.createStory(el)
+//   }
+//   catch(err) {console.log(err)}
+// })
+
 module.exports = Story;
+
+

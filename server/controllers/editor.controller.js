@@ -29,6 +29,18 @@ const getEditorStories = async (ctx, next) => {
   ctx.body = editorStories;
 };
 
+
+// const createEditor = () => {
+//   const editorData = {
+//     name: 'admin',
+//     email: 'admin',
+//     token: 'admin',
+//     picture: 'https://res.cloudinary.com/pinchepanchopincho/image/upload/v1547042159/userpics/nadal2.jpg'
+//   };
+
+
+// }
+
 module.exports = {
   signUpEditor,
   getEditorStories,

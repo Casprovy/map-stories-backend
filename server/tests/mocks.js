@@ -1,6 +1,6 @@
 const mockStories = [
   {
-    '_id': '59de322ad475362f45d70dbb',
+
     'editor': {
       '_id': '59de31ac990cda2f2f34adf0',
       'name': 'Stephen Hawking',
@@ -10,7 +10,7 @@ const mockStories = [
     'tagLine': 'Shorter than most other history books'
   },
   {
-    '_id': '59de322ad475362f45d70dbb',
+
     'editor': {
       '_id': '59de31ac990cda2f2f34adf0',
       'name': 'Ridley Scott',
@@ -20,7 +20,7 @@ const mockStories = [
     'tagLine': 'Another American Movie'
   },
   {
-    '_id': '59de322ad475362f45d70dbb',
+
     'editor': {
       '_id': '59de31ac990cda2f2f34adf0',
       'name': 'Jamie Oliver',
@@ -32,7 +32,7 @@ const mockStories = [
 ];
 
 const mockStory = {
-  '_id': '123',
+
   'title': 'Sirus B',
   'tagLine': 'Space travel on a budget',
   'events': []
