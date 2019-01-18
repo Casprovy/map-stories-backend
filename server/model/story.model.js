@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const ObjectId = require('mongoose').Types.ObjectId;
 const Schema = mongoose.Schema;
-const {mockStory, mockStories} = require('../tests/mocks');
+
 
 
 const attachmentsSchema = new Schema({
@@ -27,7 +27,7 @@ const Story = mongoose.model('Story', storySchema);
 
 Story.getAllStories = (searchTerm, page) => {
   return Story
-      .find(searchTerm)
+      .find()
       .skip((page-1)*10)
       .limit(10)
       .populate({path: 'editor', select: 'name avatar'})
@@ -36,16 +36,16 @@ Story.getAllStories = (searchTerm, page) => {
 
 
 Story.findStory = (storyId) => {
+
   return Story.findOne({_id : storyId})
               .populate({path: 'editor', select: 'name avatar'})
               .populate('events');
 };
 
-Story.createStory = (storyData) => {
-  const newStory = new Story(storyData);
-  console.log('ran', newStory)
-  newStory.save(err => {console.log(err)});
+Story.createStory = (newStory) => {
+  return newStory.save();
 };
+//
 
 Story.editStory = (storyId, updatedProps) => {
   return Story

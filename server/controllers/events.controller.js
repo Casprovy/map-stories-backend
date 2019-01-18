@@ -64,8 +64,8 @@ const addEvent = async (ctx, next) => {
       // story.events.push(createdEvent);
       // console.log(story)
       // console.log(await story.save());
-      console.log(await Story.update({ _id: ctx.params.id },
-        { $push: { events: createdEvent} }));
+      await Story.update({ _id: ctx.params.id },
+        { $push: { events: createdEvent} });
       ctx.status = 201;
       ctx.body = createdEvent;
     } else {
