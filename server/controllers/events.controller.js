@@ -8,6 +8,8 @@ require('../db')('mapstory-backend');
 
 //Adds event to events array within story object
 const addEvent = async (ctx, next) => {
+  console.log(ctx.request.body);
+
   try {
     if (ctx.request.body.title) {
       const story = await Story.findOne({_id: ctx.params.id, editor: ctx.user._id});
@@ -46,9 +48,9 @@ const addEvent = async (ctx, next) => {
       }
 
 
-
-      const locationData = ctx.request.body.location;
+      const locationData = ctx.request.body.coordinates[0];
       const location = await Location.create(locationData);
+      console.log(location)
 
       const eventData = {
         title: ctx.request.body.title,

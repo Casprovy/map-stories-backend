@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const Story = require('../model/story.model');
 const Editor = require('../model/editor.model');
 
+
+
 const getAllStories = async (ctx, next) => {
   try {
     const page = parseInt(ctx.request.query.page);
@@ -16,6 +18,7 @@ const getAllStories = async (ctx, next) => {
       searchTerm.published = true;
       stories = await Story.getAllStories(searchTerm, page);
     }
+    console.log(stories, 'stories');
     ctx.body = stories;
   } catch (e) {
     ctx.throw(400, 'No results found.');
@@ -25,6 +28,11 @@ const getAllStories = async (ctx, next) => {
 const findStory = async (ctx, next) => {
   const storyId = ctx.params.id;
   const story = await Story.findStory(storyId);
+  // const location = story.events.forEach(async (el) =>{
+  // console.log('b', Location.find())
+  // console.log( await Location.find({_id: el.location_id }));
+  // console.log(el)});
+
   ctx.body = story;
 };
 
