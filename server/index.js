@@ -14,7 +14,7 @@ const port = process.env.PORT;
 const corsOptions = {origin: 'http://localhost:3000'};
 
 app
-  .use(cors(corsOptions))
+  .use(cors())
   .use(async (ctx, next) => {
     try {
       await next();

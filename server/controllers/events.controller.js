@@ -16,26 +16,28 @@ const addEvent = async (ctx, next) => {
       if (!story) ctx.throw(404);
 
       let attachments = [];
+      console.log(ctx.request.body);
       if (ctx.request.body.attachments.length !== 0) {
         const attachmentsData = ctx.request.body.attachments;
+        console.log(attachmentsData);
         attachments = await Promise.all(attachmentsData.map(async attachment => {
           let attachmentData;
-          if (attachment.type === 'Link') {
+          if (attachment.type === 'link') {
             attachmentData = {
               type: attachment.type,
               url: attachment.url,
               urlImg: attachment.urlImg,
               title: attachment.title,
             };
-          } else if (attachment.type === 'Text') {
+          } else if (attachment.type === 'text') {
             attachmentData = {
               type: attachment.type,
               text: attachment.text,
-            };
-          } else if (attachment.type === 'Image') {
+            }
+          } else if (attachment.type === 'image') {
             attachmentData = {
               type: attachment.type,
-              urlImg: attachment.urlImg,
+              urlImg: attachment.imageUrl,
             };
           } else {
             attachmentData = {

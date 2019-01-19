@@ -15,6 +15,7 @@ const authMiddleware = async (ctx, next) => {
     return;
   }
   ctx.user = await Editor.findOne({ token });
+  console.log(ctx.user);
   if (!ctx.user) {
     ctx.status = 401;
     return;
