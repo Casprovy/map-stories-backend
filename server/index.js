@@ -9,6 +9,7 @@ const app = new Koa();
 const router = require('./router');
 require('./db')('mapstory-backend');
 
+
 const port = process.env.PORT;
 
 const corsOptions = {origin: 'http://localhost:3000'};

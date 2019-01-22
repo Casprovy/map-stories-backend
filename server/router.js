@@ -8,6 +8,7 @@ const router = new Router();
 const Editor = require('./model/editor.model');
 
 const authMiddleware = async (ctx, next) => {
+  console.log('INCOMING',ctx.headers.authorization)
   let token = ctx.headers.authorization;
   if (token) token = token.split(' ')[1];
   if (!token) {
@@ -35,6 +36,7 @@ router.put('/stories/:id', authMiddleware, storiesController.editStory);
 router.delete('/stories/:id', authMiddleware, storiesController.deleteStory);
 
 //event actions
+router.get('/geturl', authMiddleware, eventsController.getAWSUrl)
 router.post('/stories/:id/event', authMiddleware, eventsController.addEvent);
 router.put('/stories/:id/event/:eventId', authMiddleware, eventsController.editEvent);
 router.delete('/stories/:id/event/:eventId', authMiddleware, eventsController.deleteEvent);

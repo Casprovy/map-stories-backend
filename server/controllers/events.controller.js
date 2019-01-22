@@ -4,15 +4,60 @@ const Event = require('../model/event.model').Event;
 const Attachment = require('../model/event.model').Attachment;
 const Location = require('../model/event.model').Location;
 
+const result = require('dotenv').config({ path: process.cwd() + '/enviroment/.env' })
 require('../db')('mapstory-backend');
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({ accessKeyId: result.parsed.AWSAccessKeyId, secretAccessKey: result.parsed.AWSSecretKey, region: 'eu-west-3'});
+
+
+
+// db.connect({
+//   AWSAccessKeyId: process.env.AWSAccessKeyId
+// });
+
 
 //Adds event to events array within story object
+const getAWSUrl = async (ctx, next) => {
+  const myBucket = result.parsed.BucketName;
+  let expire = 3600;
+  const myKey = 'uploads/';
+
+  // const params = { Bucket: myBucket, Key: myKey, Expires: expire, ACL: 'bucket-owner-full-control', ContentType: 'image/jpg' };
+  const postParams = {
+    Bucket: myBucket,
+    Conditions: [
+
+      ['starts-with', '$key', 'uploads/'],
+    ]
+  };
+
+  const data = await new Promise((resolve, reject)=> {s3.createPresignedPost(postParams, function (err, data) {
+    if (err) {
+      console.log('Error getting presigned url from AWS S3');
+      ctx.body = { success: false, message: 'Pre-Signed URL error', urls: fileUrls };
+      reject(err)
+    }
+    else {
+      console.log('data', data);
+      resolve(data);
+    }
+  })});
+
+  ctx.status = 201;
+  ctx.body = data;
+}
+
+
+
+
 const addEvent = async (ctx, next) => {
+  console.log('here');
+
   console.log(ctx.request.body);
 
   try {
     if (ctx.request.body.title) {
-      const story = await Story.findOne({_id: ctx.params.id, editor: ctx.user._id});
+      const story = await Story.findOne({ _id: ctx.params.id, editor: ctx.user._id });
       if (!story) ctx.throw(404);
 
       let attachments = [];
@@ -69,7 +114,8 @@ const addEvent = async (ctx, next) => {
       // console.log(story)
       // console.log(await story.save());
       await Story.update({ _id: ctx.params.id },
-        { $push: { events: createdEvent} });
+        { $push: { events: createdEvent } });
+      console.log(createdEvent);
       ctx.status = 201;
       ctx.body = createdEvent;
     } else {
@@ -102,8 +148,8 @@ const editEvent = async (ctx, next) => {
     if (data.attachments) updatedProps.published = data.attachments;
 
     const eventId = ctx.params.eventId;
-    await Event.findOneAndUpdate({'_id': eventId}, {$set: updatedProps});
-    ctx.body = await Event.findOne({'_id': eventId});
+    await Event.findOneAndUpdate({ '_id': eventId }, { $set: updatedProps });
+    ctx.body = await Event.findOne({ '_id': eventId });
   } catch (error) {
     throw (401, error);
   }
@@ -134,5 +180,6 @@ const deleteEvent = async (ctx, next) => {
 module.exports = {
   addEvent,
   editEvent,
-  deleteEvent
+  deleteEvent,
+  getAWSUrl
 };
