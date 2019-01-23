@@ -1,16 +1,20 @@
-export class EventsController {
-  constructor(Story, Event, Attachment, Location, result, AWS, s3) {
+class EventsController {
+  constructor(Story, Event, Attachment, Location, s3) {
 
     this.Story = Story;
     this.Event = Event;
     this.Attachment = Attachment;
     this.Location = Location;
-    this.result = result;
-    this.AWS = AWS;
     this.s3 = s3;
+    this.getAWSUrl = this.getAWSUrl.bind(this);
+    this.addEvent = this.addEvent.bind(this);
+    this.editEvent = this.editEvent.bind(this);
+    this.deleteEvent = this.deleteEvent.bind(this);
+
   }
-  getAWSUrl = async (ctx, next) => {
-    const myBucket = result.parsed.BucketName;
+
+  async getAWSUrl (ctx, next) {
+    const myBucket = process.env.BucketName;
     let expire = 3600;
     const myKey = 'uploads/';
 
@@ -18,12 +22,11 @@ export class EventsController {
     const postParams = {
       Bucket: myBucket,
       Conditions: [
-
         ['starts-with', '$key', 'uploads/'],
       ]
     };
 
-    const data = await new Promise((resolve, reject)=> {s3.createPresignedPost(postParams, function (err, data) {
+    const data = await new Promise((resolve, reject)=> {this.s3.createPresignedPost(postParams, function (err, data) {
       if (err) {
         console.log('Error getting presigned url from AWS S3');
         ctx.body = { success: false, message: 'Pre-Signed URL error', urls: fileUrls };
@@ -42,14 +45,14 @@ export class EventsController {
 
 
 
-  addEvent = async (ctx, next) => {
+  async addEvent (ctx, next) {
     console.log('here');
 
     console.log(ctx.request.body);
 
     try {
       if (ctx.request.body.title) {
-        const story = await Story.findOne({ _id: ctx.params.id, editor: ctx.user._id });
+        const story = await this.Story.findOne({ _id: ctx.params.id, editor: ctx.user._id });
         if (!story) ctx.throw(404);
 
         let attachments = [];
@@ -82,13 +85,13 @@ export class EventsController {
                 url: attachment.url,
               };
             }
-            return await Attachment.create(attachmentData);
+            return await this.Attachment.create(attachmentData);
           }));
         }
 
 
         const locationData = ctx.request.body.coordinates[0];
-        const location = await Location.create(locationData);
+        const location = await this.Location.create(locationData);
         console.log(location)
 
         const eventData = {
@@ -99,13 +102,13 @@ export class EventsController {
           location,
           attachments,
         };
-        const createdEvent = await Event.create(eventData);
+        const createdEvent = await this.Event.create(eventData);
         // console.log('I am here', createdEvent)
         // console.log(story)
         // story.events.push(createdEvent);
         // console.log(story)
         // console.log(await story.save());
-        await Story.update({ _id: ctx.params.id },
+        await this.Story.update({ _id: ctx.params.id },
           { $push: { events: createdEvent } });
         console.log(createdEvent);
         ctx.status = 201;
@@ -121,10 +124,10 @@ export class EventsController {
   };
 
   //Updates existing events
-  editEvent = async (ctx, next) => {
+  async editEvent (ctx, next) {
 
     try {
-      const story = await Story.findOne({
+      const story = await this.Story.findOne({
         _id: ctx.params.id,
         editor: ctx.user._id,
       }).populate('events');
@@ -140,17 +143,17 @@ export class EventsController {
       if (data.attachments) updatedProps.published = data.attachments;
 
       const eventId = ctx.params.eventId;
-      await Event.findOneAndUpdate({ '_id': eventId }, { $set: updatedProps });
-      ctx.body = await Event.findOne({ '_id': eventId });
+      await this.Event.findOneAndUpdate({ '_id': eventId }, { $set: updatedProps });
+      ctx.body = await this.Event.findOne({ '_id': eventId });
     } catch (error) {
       throw (401, error);
     }
   };
 
   //Deletes existing events
- deleteEvent = async (ctx, next) => {
+  async deleteEvent  (ctx, next) {
     try {
-      const story = await Story.findOne({
+      const story = await this.Story.findOne({
         _id: ctx.params.id,
         editor: ctx.user._id
       }).populate('events');
@@ -168,13 +171,6 @@ export class EventsController {
       throw (401, 'Could not edit event!');
     }
   };
-
-
-
 };
-// module.exports = {
-//   addEvent,
-//   editEvent,
-//   deleteEvent,
-//   getAWSUrl
-// };
+
+module.exports = EventsController;

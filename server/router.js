@@ -2,10 +2,28 @@ const Router = require('koa-router');
 
 const storiesController = require('./controllers/stories.controller');
 const editorController = require('./controllers/editor.controller');
-const eventsController = require('./controllers/events.controller');
+// const eventsController = require('./controllers/events.controller');
 const router = new Router();
 
 const Editor = require('./model/editor.model');
+
+// for injection based controller
+
+const mongoose = require('mongoose');
+const Story = require('./model/story.model');
+const Event = require('./model/event.model').Event;
+const Attachment = require('./model/event.model').Attachment;
+const Location = require('./model/event.model').Location;
+
+require('dotenv').config({ path: process.cwd() + '/enviroment/.env' })
+require('./db')('mapstory-backend');
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({ accessKeyId: process.env.AWSAccessKeyId, secretAccessKey: process.env.AWSSecretKey, region: 'eu-west-3'});
+const EventController = require('./controllers/events.controllerAsClass');
+const eventsController = new EventController(Story, Event, Attachment, Location, s3);
+
+
+// end of injection attempt
 
 const authMiddleware = async (ctx, next) => {
   console.log('INCOMING',ctx.headers.authorization)
