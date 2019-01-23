@@ -14,41 +14,46 @@ class EventsController {
   }
 
   async getAWSUrl (ctx, next) {
-    const myBucket = process.env.BucketName;
-    let expire = 3600;
-    const myKey = 'uploads/';
 
-    // const params = { Bucket: myBucket, Key: myKey, Expires: expire, ACL: 'bucket-owner-full-control', ContentType: 'image/jpg' };
-    const postParams = {
-      Bucket: myBucket,
-      Conditions: [
-        ['starts-with', '$key', 'uploads/'],
-      ]
-    };
+      const myBucket = process.env.BucketName;
+      let expire = 3600;
+      const myKey = 'uploads/';
 
-    const data = await new Promise((resolve, reject)=> {this.s3.createPresignedPost(postParams, function (err, data) {
-      if (err) {
-        console.log('Error getting presigned url from AWS S3');
-        ctx.body = { success: false, message: 'Pre-Signed URL error', urls: fileUrls };
-        reject(err)
-      }
-      else {
-        console.log('data', data);
-        resolve(data);
-      }
-    })});
 
-    ctx.status = 201;
-    ctx.body = data;
+      // const params = { Bucket: myBucket, Key: myKey, Expires: expire, ACL: 'bucket-owner-full-control', ContentType: 'image/jpg' };
+      const postParams = {
+        Bucket: myBucket,
+        Conditions: [
+          ['starts-with', '$key', 'uploads/'],
+        ]
+      };
+
+      const data = await new Promise((resolve, reject) => {
+        this.s3.createPresignedPost(postParams, function (err, data) {
+          if (err) {
+            console.log('Error getting presigned url from AWS S3');
+            ctx.body = { success: false, message: 'Pre-Signed URL error', urls: fileUrls };
+            reject(err);
+          }
+          else {
+            resolve(data);
+          }
+        })
+      });
+
+      console.log('data', data);
+
+
+      ctx.status = 201;
+      ctx.body = data;
+
   }
 
 
 
 
   async addEvent (ctx, next) {
-    console.log('here');
 
-    console.log(ctx.request.body);
 
     try {
       if (ctx.request.body.title) {
@@ -59,7 +64,7 @@ class EventsController {
         console.log(ctx.request.body);
         if (ctx.request.body.attachments.length !== 0) {
           const attachmentsData = ctx.request.body.attachments;
-          console.log('attachment',attachmentsData);
+          console.log('attachment', attachmentsData);
           attachments = await Promise.all(attachmentsData.map(async attachment => {
             let attachmentData;
             if (attachment.type === 'link') {
@@ -151,7 +156,7 @@ class EventsController {
   };
 
   //Deletes existing events
-  async deleteEvent  (ctx, next) {
+  async deleteEvent (ctx, next) {
     try {
       const story = await this.Story.findOne({
         _id: ctx.params.id,
