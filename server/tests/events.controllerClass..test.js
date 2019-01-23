@@ -11,8 +11,12 @@ const s3 = new AWS.S3({ accessKeyId: process.env.AWSAccessKeyId, secretAccessKey
 
 const eventTest = new EventController(null,null,null,null,s3);
 
-describe('getAWSkey', function () {
-  i
+describe('getAWSUrl', function () {
+  it('should return an AWS path', function () {
+    eventTest.getAWSUrl
+
+
+  })
 })
 
 
