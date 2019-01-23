@@ -64,7 +64,7 @@ const addEvent = async (ctx, next) => {
       console.log(ctx.request.body);
       if (ctx.request.body.attachments.length !== 0) {
         const attachmentsData = ctx.request.body.attachments;
-        console.log(attachmentsData);
+        console.log('attachment',attachmentsData);
         attachments = await Promise.all(attachmentsData.map(async attachment => {
           let attachmentData;
           if (attachment.type === 'link') {
