@@ -94,9 +94,14 @@ class EventsController {
           }));
         }
 
+        console.log('Body', ctx.request.body)
 
-        const locationData = ctx.request.body.coordinates[0];
+
+        // const locationData = ctx.request.body.coordinates[0];
+        const locationData = {lng:2.197941, lat: 41.394841}
+
         const location = await this.Location.create(locationData);
+
         console.log(location)
 
         const eventData = {
