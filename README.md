@@ -21,4 +21,6 @@ Under Key, set a property, Token and input the dummy token to test authenticated
 * [Koa](https://koajs.com/)
 * [Mongoose](https://mongoosejs.com/)
 * [MongoDb](https://www.mongodb.com/)
-- Mocha, Chai and Sinon
+* [Mocha](https://mochajs.org/)
+* [Sinon](https://sinonjs.org/)
+* [Chai](https://www.chaijs.com/)
