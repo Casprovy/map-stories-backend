@@ -18,7 +18,7 @@ Under Key, set a property, Token and input the dummy token to test authenticated
 
 
 ## Tech Stack
-- Koa
-- MongoDB
-- Mongoose
+* [Koa](https://koajs.com/)
+* [Mongoose](https://mongoosejs.com/)
+* [MongoDb](https://www.mongodb.com/)
 - Mocha, Chai and Sinon
